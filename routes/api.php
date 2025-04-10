@@ -10,17 +10,6 @@ use App\Http\Controllers\API\PositionController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\HealthController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
 // Health check endpoint - public
 Route::get('/health', [HealthController::class, 'check']);
 
