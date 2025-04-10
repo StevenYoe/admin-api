@@ -85,7 +85,7 @@ class PositionController extends Controller
      */
     public function show($id)
     {
-        $position = Position::with('users')->find($id);
+        $position = Position::with('users', 'users.division')->find($id);
 
         if (!$position) {
             return response()->json([

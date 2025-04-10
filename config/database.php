@@ -42,7 +42,7 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-            'search_path' => 'login',
+            'search_path' => 'login,public',
             'sslmode' => 'prefer',
         ],
 

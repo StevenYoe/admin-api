@@ -16,6 +16,9 @@ class User extends Authenticatable
     protected $table = 'login.users';
     protected $primaryKey = 'u_id';
 
+    const CREATED_AT = 'u_created_at';
+    const UPDATED_AT = 'u_updated_at';
+
     protected $fillable = [
         'u_employee_id',
         'u_name',

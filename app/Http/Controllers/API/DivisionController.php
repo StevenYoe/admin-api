@@ -85,7 +85,7 @@ class DivisionController extends Controller
      */
     public function show($id)
     {
-        $division = Division::with('users')->find($id);
+        $division = Division::with('users', 'users.position')->find($id);
 
         if (!$division) {
             return response()->json([

@@ -44,7 +44,7 @@ class UserController extends Controller
             'u_employee_id' => 'required|string|max:20|unique:login.users,u_employee_id',
             'u_name' => 'required|string|max:100',
             'u_email' => 'required|email|max:100|unique:login.users,u_email',
-            'u_password' => 'required|string|min:8',
+            'u_password' => 'required|string|min:8|confirmed',
             'u_phone' => 'nullable|string|max:20',
             'u_address' => 'nullable|string',
             'u_birthdate' => 'nullable|date',
@@ -69,9 +69,11 @@ class UserController extends Controller
         $validated = $validator->validated();
         $validated['u_password'] = Hash::make($validated['u_password']);
         $validated['u_created_by'] = auth()->id() ?? 'system';
-        $validated['u_updated_by'] = auth()->id() ?? 'system';
+        $validated['u_updated_at'] = NULL;
+        $validated['u_updated_by'] = NULL;
 
         $user = User::create($validated);
+        $user->timestamps = false;
 
         // Attach roles if provided
         if (isset($validated['roles'])) {
@@ -157,6 +159,8 @@ class UserController extends Controller
 
         $validated = $validator->validated();
         $validated['u_updated_by'] = auth()->id() ?? 'system';
+        unset($validated['u_created_at']);
+        unset($validated['u_created_by']);
 
         // Update password if provided
         if (isset($validated['u_password'])) {

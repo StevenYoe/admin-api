@@ -29,6 +29,7 @@ class DashboardController extends Controller
             'active_roles' => Role::where('role_is_active', true)->count(),
             'managers_count' => User::where('u_is_manager', true)->count(),
             'users_by_division' => $this->getUsersByDivision(),
+            'users_by_position' => $this->getUsersByPosition(),
             'recent_users' => User::with(['division', 'position'])
                 ->orderBy('u_created_at', 'desc')
                 ->take(5)
@@ -55,6 +56,21 @@ class DashboardController extends Controller
             $data[] = [
                 'name' => $division->div_name,
                 'count' => $division->users_count
+            ];
+        }
+
+        return $data;
+    }
+
+    private function getUsersByPosition()
+    {
+        $positions = Position::withCount('users')->get();
+        
+        $data = [];
+        foreach ($positions as $position) {
+            $data[] = [
+                'name' => $position->pos_name,
+                'count' => $position->users_count
             ];
         }
 
