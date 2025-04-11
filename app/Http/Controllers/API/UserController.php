@@ -67,8 +67,9 @@ class UserController extends Controller
             ], 422);
         }
 
+        $validated = $validator->validated();
+
         // Handle profile image upload
-        // Di UserController.php API backend
         if ($request->hasFile('u_profile_image')) {
             $file = $request->file('u_profile_image');
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -76,7 +77,6 @@ class UserController extends Controller
             $validated['u_profile_image'] = $path;
         }
 
-        $validated = $validator->validated();
         $validated['u_password'] = Hash::make($validated['u_password']);
         $validated['u_created_by'] = auth()->id() ?? 'system';
         $validated['u_updated_at'] = NULL;
@@ -168,8 +168,9 @@ class UserController extends Controller
             ], 422);
         }
 
+        $validated = $validator->validated();
+        
         // Handle profile image upload
-        // Di UserController.php API backend
         if ($request->hasFile('u_profile_image')) {
             $file = $request->file('u_profile_image');
             $filename = time() . '_' . $file->getClientOriginalName();
@@ -177,7 +178,6 @@ class UserController extends Controller
             $validated['u_profile_image'] = $path;
         }
 
-        $validated = $validator->validated();
         $validated['u_updated_by'] = auth()->id() ?? 'system';
         unset($validated['u_created_at']);
         unset($validated['u_created_by']);
