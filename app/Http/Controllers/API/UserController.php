@@ -49,6 +49,7 @@ class UserController extends Controller
             'u_address' => 'nullable|string',
             'u_birthdate' => 'nullable|date',
             'u_join_date' => 'required|date',
+            'u_profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'u_division_id' => 'nullable|exists:login.divisions,div_id',
             'u_position_id' => 'nullable|exists:login.positions,pos_id',
             'u_is_manager' => 'nullable|boolean',
@@ -64,6 +65,15 @@ class UserController extends Controller
                 'message' => 'Validation error',
                 'errors' => $validator->errors()
             ], 422);
+        }
+
+        // Handle profile image upload
+        // Di UserController.php API backend
+        if ($request->hasFile('u_profile_image')) {
+            $file = $request->file('u_profile_image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('profile_images', $filename, 'public');
+            $validated['u_profile_image'] = $path;
         }
 
         $validated = $validator->validated();
@@ -140,6 +150,7 @@ class UserController extends Controller
             'u_address' => 'nullable|string',
             'u_birthdate' => 'nullable|date',
             'u_join_date' => 'required|date',
+            'u_profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'u_division_id' => 'nullable|exists:login.divisions,div_id',
             'u_position_id' => 'nullable|exists:login.positions,pos_id',
             'u_is_manager' => 'nullable|boolean',
@@ -155,6 +166,15 @@ class UserController extends Controller
                 'message' => 'Validation error',
                 'errors' => $validator->errors()
             ], 422);
+        }
+
+        // Handle profile image upload
+        // Di UserController.php API backend
+        if ($request->hasFile('u_profile_image')) {
+            $file = $request->file('u_profile_image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('profile_images', $filename, 'public');
+            $validated['u_profile_image'] = $path;
         }
 
         $validated = $validator->validated();
