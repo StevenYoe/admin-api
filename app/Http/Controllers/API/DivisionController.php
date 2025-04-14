@@ -19,7 +19,14 @@ class DivisionController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->query('per_page', 10);
-        $divisions = Division::paginate($perPage);
+        $sortBy = $request->query('sort_by', 'div_id');
+        $sortOrder = $request->query('sort_order', 'asc');
+
+        $allowedSortColumns = ['div_id', 'div_code', 'div_name'];
+        $sortBy = in_array($sortBy, $allowedSortColumns) ? $sortBy : 'div_id';
+
+        $divisions = Division::orderBy($sortBy, $sortOrder)
+            ->paginate($perPage);
 
         return response()->json([
             'success' => true,

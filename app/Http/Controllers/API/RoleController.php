@@ -19,7 +19,15 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->query('per_page', 10);
-        $roles = Role::withCount('users')->paginate($perPage);
+        $sortBy = $request->query('sort_by', 'role_id');
+        $sortOrder = $request->query('sort_order', 'asc');
+
+        $allowedSortColumns = ['role_id', 'role_name', 'role_level'];
+        $sortBy = in_array($sortBy, $allowedSortColumns) ? $sortBy : 'role_id';
+
+        $roles = Role::withCount('users')
+            ->orderBy($sortBy, $sortOrder)
+            ->paginate($perPage);
 
         return response()->json([
             'success' => true,
@@ -52,7 +60,7 @@ class RoleController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'role_name' => 'required|string|max:50|unique:login.roles,role_name',
-            'role_level' => 'required|integer|min:1|max:100',
+            'role_level' => 'required|integer|min:0|max:100000',
             'role_is_active' => 'nullable|boolean',
         ]);
 
@@ -123,7 +131,7 @@ class RoleController extends Controller
                 'required', 'string', 'max:50',
                 Rule::unique('login.roles', 'role_name')->ignore($id, 'role_id')
             ],
-            'role_level' => 'required|integer|min:1|max:100',
+            'role_level' => 'required|integer|min:0|max:100000',
             'role_is_active' => 'nullable|boolean',
         ]);
 

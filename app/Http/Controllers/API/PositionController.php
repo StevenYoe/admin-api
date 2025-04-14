@@ -19,7 +19,14 @@ class PositionController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->query('per_page', 10);
-        $positions = Position::paginate($perPage);
+        $sortBy = $request->query('sort_by', 'pos_id');
+        $sortOrder = $request->query('sort_order', 'asc');
+
+        $allowedSortColumns = ['pos_id', 'pos_code', 'pos_name'];
+        $sortBy = in_array($sortBy, $allowedSortColumns) ? $sortBy : 'pos_id';
+
+        $positions = Position::orderBy($sortBy, $sortOrder)
+            ->paginate($perPage);
 
         return response()->json([
             'success' => true,

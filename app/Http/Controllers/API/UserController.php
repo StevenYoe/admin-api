@@ -23,8 +23,28 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->query('per_page', 10);
-        $users = User::with(['division', 'position', 'roles'])
-            ->paginate($perPage);
+        $sortBy = $request->query('sort_by', 'u_id');
+        $sortOrder = $request->query('sort_order', 'asc');
+        $search = $request->query('search', '');
+    
+        $query = User::with(['division', 'position', 'roles']);
+    
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('u_name', 'like', "%$search%")
+                  ->orWhere('u_email', 'like', "%$search%")
+                  ->orWhere('u_employee_id', 'like', "%$search%");
+            });
+        }
+
+        // Validasi kolom yang boleh diurutkan
+        $allowedSortColumns = ['u_employee_id', 'u_name', 'u_email', 'u_join_date'];
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'u_id';
+        }
+
+        $users = $query->orderBy($sortBy, $sortOrder)
+        ->paginate($perPage);
 
         return response()->json([
             'success' => true,
