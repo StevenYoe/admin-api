@@ -190,12 +190,20 @@ class UserController extends Controller
 
         $validated = $validator->validated();
         
+        // Store old profile image path if exists
+        $oldProfileImage = $user->u_profile_image;
+        
         // Handle profile image upload
         if ($request->hasFile('u_profile_image')) {
             $file = $request->file('u_profile_image');
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('profile_images', $filename, 'public');
             $validated['u_profile_image'] = $path;
+            
+            // Delete old profile image if exists
+            if ($oldProfileImage && file_exists(storage_path('app/public/' . $oldProfileImage))) {
+                unlink(storage_path('app/public/' . $oldProfileImage));
+            }
         }
 
         $validated['u_updated_by'] = auth()->id() ?? 'system';
