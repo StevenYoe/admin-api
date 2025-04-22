@@ -19,7 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:8000'], // In production, replace with your frontend URL
+    'allowed_origins' => [
+        'http://localhost:8000', // admin-panel
+        'http://localhost:8003', // landing-admin-panel
+    ],
 
     'allowed_origins_patterns' => [],
 
