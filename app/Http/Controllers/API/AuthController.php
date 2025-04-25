@@ -32,8 +32,11 @@ class AuthController extends Controller
             ], 422);
         }
 
+        // Convert email to lowercase before checking
+        $email = strtolower($request->email);
+
         // Check email
-        $user = User::where('u_email', $request->email)->first();
+        $user = User::where('u_email', $email)->first();
 
         // Check if user exists and is active
         if (!$user || !$user->u_is_active) {

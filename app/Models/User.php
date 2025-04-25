@@ -51,6 +51,12 @@ class User extends Authenticatable
         'u_updated_at' => 'datetime',
     ];
 
+    // Mutator untuk u_email - Mengubah email menjadi lowercase
+    public function setUEmailAttribute($value)
+    {
+        $this->attributes['u_email'] = strtolower($value);
+    }
+
     public function division()
     {
         return $this->belongsTo(Division::class, 'u_division_id', 'div_id');
