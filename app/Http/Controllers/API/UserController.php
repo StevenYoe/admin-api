@@ -92,7 +92,7 @@ class UserController extends Controller
         // Handle profile image upload
         if ($request->hasFile('u_profile_image')) {
             $file = $request->file('u_profile_image');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = $file->getClientOriginalName();
             $path = $file->storeAs('profile_images', $filename, 'public');
             $validated['u_profile_image'] = $path;
         }
@@ -196,7 +196,7 @@ class UserController extends Controller
         // Handle profile image upload
         if ($request->hasFile('u_profile_image')) {
             $file = $request->file('u_profile_image');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = $file->getClientOriginalName();
             $path = $file->storeAs('profile_images', $filename, 'public');
             $validated['u_profile_image'] = $path;
             
