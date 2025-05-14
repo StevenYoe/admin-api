@@ -11,9 +11,9 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    // In User.php and other related models
-    protected $connection = 'login';
-    protected $table = 'login.users';
+    // Remove schema prefix from table name
+    protected $connection = 'mysql';
+    protected $table = 'login_users';
     protected $primaryKey = 'u_id';
 
     const CREATED_AT = 'u_created_at';
@@ -51,7 +51,7 @@ class User extends Authenticatable
         'u_updated_at' => 'datetime',
     ];
 
-    // Mutator untuk u_email - Mengubah email menjadi lowercase
+    // Mutator to convert email to lowercase
     public function setUEmailAttribute($value)
     {
         $this->attributes['u_email'] = strtolower($value);
@@ -79,6 +79,6 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'login.user_roles', 'ur_user_id', 'ur_role_id');
+        return $this->belongsToMany(Role::class, 'login_user_roles', 'ur_user_id', 'ur_role_id');
     }
 }

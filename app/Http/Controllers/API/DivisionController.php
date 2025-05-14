@@ -58,7 +58,7 @@ class DivisionController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'div_code' => 'required|string|max:10|unique:login.divisions,div_code',
+            'div_code' => 'required|string|max:10|unique:login_divisions,div_code',
             'div_name' => 'required|string|max:100',
             'div_is_active' => 'nullable|boolean',
         ]);
@@ -128,7 +128,7 @@ class DivisionController extends Controller
         $validator = Validator::make($request->all(), [
             'div_code' => [
                 'required', 'string', 'max:10',
-                Rule::unique('login.divisions', 'div_code')->ignore($id, 'div_id')
+                Rule::unique('login_divisions', 'div_code')->ignore($id, 'div_id')
             ],
             'div_name' => 'required|string|max:100',
             'div_is_active' => 'nullable|boolean',

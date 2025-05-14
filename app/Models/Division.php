@@ -9,9 +9,9 @@ class Division extends Model
 {
     use HasFactory;
 
-    // In User.php and other related models
-    protected $connection = 'login';
-    protected $table = 'login.divisions';
+    // Remove schema prefix from table name
+    protected $connection = 'mysql';
+    protected $table = 'login_divisions';
     protected $primaryKey = 'div_id';
 
     protected $fillable = [

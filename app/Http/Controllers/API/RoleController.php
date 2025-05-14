@@ -59,7 +59,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'role_name' => 'required|string|max:50|unique:login.roles,role_name',
+            'role_name' => 'required|string|max:50|unique:login_roles,role_name',
             'role_level' => 'required|integer|min:0|max:100000',
             'role_is_active' => 'nullable|boolean',
         ]);
@@ -129,7 +129,7 @@ class RoleController extends Controller
         $validator = Validator::make($request->all(), [
             'role_name' => [
                 'required', 'string', 'max:50',
-                Rule::unique('login.roles', 'role_name')->ignore($id, 'role_id')
+                Rule::unique('login_roles', 'role_name')->ignore($id, 'role_id')
             ],
             'role_level' => 'required|integer|min:0|max:100000',
             'role_is_active' => 'nullable|boolean',

@@ -9,9 +9,9 @@ class Role extends Model
 {
     use HasFactory;
 
-    // In User.php and other related models
-    protected $connection = 'login';
-    protected $table = 'login.roles';
+    // Remove schema prefix from table name
+    protected $connection = 'mysql';
+    protected $table = 'login_roles';
     protected $primaryKey = 'role_id';
 
     protected $fillable = [
@@ -34,6 +34,6 @@ class Role extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'login.user_roles', 'ur_role_id', 'ur_user_id');
+        return $this->belongsToMany(User::class, 'login_user_roles', 'ur_role_id', 'ur_user_id');
     }
 }

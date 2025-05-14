@@ -9,9 +9,9 @@ class Position extends Model
 {
     use HasFactory;
 
-    // In User.php and other related models
-    protected $connection = 'login';
-    protected $table = 'login.positions';
+    // Remove schema prefix from table name
+    protected $connection = 'mysql';
+    protected $table = 'login_positions';
     protected $primaryKey = 'pos_id';
 
     protected $fillable = [

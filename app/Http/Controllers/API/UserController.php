@@ -61,22 +61,22 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'u_employee_id' => 'required|string|max:20|unique:login.users,u_employee_id',
+            'u_employee_id' => 'required|string|max:20|unique:login_users,u_employee_id',
             'u_name' => 'required|string|max:100',
-            'u_email' => 'required|email|max:100|unique:login.users,u_email',
+            'u_email' => 'required|email|max:100|unique:login_users,u_email',
             'u_password' => 'required|string|min:8|confirmed',
             'u_phone' => 'nullable|string|max:20',
             'u_address' => 'nullable|string',
             'u_birthdate' => 'nullable|date',
             'u_join_date' => 'required|date',
             'u_profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'u_division_id' => 'nullable|exists:login.divisions,div_id',
-            'u_position_id' => 'nullable|exists:login.positions,pos_id',
+            'u_division_id' => 'nullable|exists:login_divisions,div_id',
+            'u_position_id' => 'nullable|exists:login_positions,pos_id',
             'u_is_manager' => 'nullable|boolean',
-            'u_manager_id' => 'nullable|exists:login.users,u_id',
+            'u_manager_id' => 'nullable|exists:login_users,u_id',
             'u_is_active' => 'nullable|boolean',
             'roles' => 'nullable|array',
-            'roles.*' => 'exists:login.roles,role_id',
+            'roles.*' => 'exists:login_roles,role_id',
         ]);
 
         if ($validator->fails()) {
@@ -162,22 +162,22 @@ class UserController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'u_employee_id' => ['required', 'string', 'max:20', Rule::unique('login.users', 'u_employee_id')->ignore($id, 'u_id')],
+            'u_employee_id' => ['required', 'string', 'max:20', Rule::unique('login_users', 'u_employee_id')->ignore($id, 'u_id')],
             'u_name' => 'required|string|max:100',
-            'u_email' => ['required', 'email', 'max:100', Rule::unique('login.users', 'u_email')->ignore($id, 'u_id')],
+            'u_email' => ['required', 'email', 'max:100', Rule::unique('login_users', 'u_email')->ignore($id, 'u_id')],
             'u_password' => 'nullable|string|min:8',
             'u_phone' => 'nullable|string|max:20',
             'u_address' => 'nullable|string',
             'u_birthdate' => 'nullable|date',
             'u_join_date' => 'required|date',
             'u_profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'u_division_id' => 'nullable|exists:login.divisions,div_id',
-            'u_position_id' => 'nullable|exists:login.positions,pos_id',
+            'u_division_id' => 'nullable|exists:login_divisions,div_id',
+            'u_position_id' => 'nullable|exists:login_positions,pos_id',
             'u_is_manager' => 'nullable|boolean',
-            'u_manager_id' => 'nullable|exists:login.users,u_id',
+            'u_manager_id' => 'nullable|exists:login_users,u_id',
             'u_is_active' => 'nullable|boolean',
             'roles' => 'nullable|array',
-            'roles.*' => 'exists:login.roles,role_id',
+            'roles.*' => 'exists:login_roles,role_id',
         ]);
 
         if ($validator->fails()) {

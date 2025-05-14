@@ -58,7 +58,7 @@ class PositionController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'pos_code' => 'required|string|max:10|unique:login.positions,pos_code',
+            'pos_code' => 'required|string|max:10|unique:login_positions,pos_code',
             'pos_name' => 'required|string|max:100',
             'pos_is_active' => 'nullable|boolean',
         ]);
@@ -128,7 +128,7 @@ class PositionController extends Controller
         $validator = Validator::make($request->all(), [
             'pos_code' => [
                 'required', 'string', 'max:10',
-                Rule::unique('login.positions', 'pos_code')->ignore($id, 'pos_id')
+                Rule::unique('login_positions', 'pos_code')->ignore($id, 'pos_id')
             ],
             'pos_name' => 'required|string|max:100',
             'pos_is_active' => 'nullable|boolean',
