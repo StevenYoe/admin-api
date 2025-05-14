@@ -12,7 +12,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     // Remove schema prefix from table name
-    protected $connection = 'mysql';
+    protected $connection = 'pazar';
     protected $table = 'login_users';
     protected $primaryKey = 'u_id';
 

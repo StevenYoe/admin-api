@@ -10,7 +10,7 @@ class Position extends Model
     use HasFactory;
 
     // Remove schema prefix from table name
-    protected $connection = 'mysql';
+    protected $connection = 'pazar';
     protected $table = 'login_positions';
     protected $primaryKey = 'pos_id';
 

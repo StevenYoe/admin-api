@@ -10,7 +10,7 @@ class Division extends Model
     use HasFactory;
 
     // Remove schema prefix from table name
-    protected $connection = 'mysql';
+    protected $connection = 'pazar';
     protected $table = 'login_divisions';
     protected $primaryKey = 'div_id';
 
