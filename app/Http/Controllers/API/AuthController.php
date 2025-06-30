@@ -54,6 +54,9 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Muat relasi sebelum membuat token
+        $user->load(['division', 'position', 'roles']);
+
         // Create token
         $token = $user->createToken('auth_token')->plainTextToken;
 
