@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
+// UserController handles CRUD operations and queries for User resources via API endpoints.
 class UserController extends Controller
 {
     /**
@@ -19,16 +20,22 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     *
+     * This method returns a paginated list of users, with optional search and sorting.
+     * It also loads related division, position, and roles for each user.
      */
     public function index(Request $request)
     {
+        // Get pagination, sorting, and search parameters from the request
         $perPage = $request->query('per_page', 10);
         $sortBy = $request->query('sort_by', 'u_id');
         $sortOrder = $request->query('sort_order', 'asc');
         $search = $request->query('search', '');
     
+        // Start query with related models
         $query = User::with(['division', 'position', 'roles']);
     
+        // Apply search filter if provided
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('u_name', 'like', "%$search%")
@@ -37,15 +44,17 @@ class UserController extends Controller
             });
         }
 
-        // Validasi kolom yang boleh diurutkan
+        // Only allow sorting by certain columns
         $allowedSortColumns = ['u_employee_id', 'u_name', 'u_email', 'u_join_date'];
         if (!in_array($sortBy, $allowedSortColumns)) {
             $sortBy = 'u_id';
         }
 
+        // Query users with sorting and pagination
         $users = $query->orderBy($sortBy, $sortOrder)
         ->paginate($perPage);
 
+        // Return paginated users as JSON
         return response()->json([
             'success' => true,
             'data' => $users,
@@ -57,9 +66,13 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     *
+     * This method validates and creates a new user record, handles profile image upload,
+     * hashes the password, and attaches roles if provided.
      */
     public function store(Request $request)
     {
+        // Validate the request data for creating a user
         $validator = Validator::make($request->all(), [
             'u_employee_id' => 'required|string|max:20|unique:login_users,u_employee_id',
             'u_name' => 'required|string|max:100',
@@ -79,6 +92,7 @@ class UserController extends Controller
             'roles.*' => 'exists:login_roles,role_id',
         ]);
 
+        // Return validation errors if any
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -89,7 +103,7 @@ class UserController extends Controller
 
         $validated = $validator->validated();
 
-        // Handle profile image upload
+        // Handle profile image upload if provided
         if ($request->hasFile('u_profile_image')) {
             $file = $request->file('u_profile_image');
             $filename = $file->getClientOriginalName();
@@ -97,11 +111,13 @@ class UserController extends Controller
             $validated['u_profile_image'] = $path;
         }
 
+        // Hash the password before saving
         $validated['u_password'] = Hash::make($validated['u_password']);
         $validated['u_created_by'] = auth()->id() ?? 'system';
         $validated['u_updated_at'] = NULL;
         $validated['u_updated_by'] = NULL;
 
+        // Create the user
         $user = User::create($validated);
         $user->timestamps = false;
 
@@ -112,6 +128,7 @@ class UserController extends Controller
             ]);
         }
 
+        // Return success response with created user and relations
         return response()->json([
             'success' => true,
             'message' => 'User created successfully',
@@ -124,12 +141,16 @@ class UserController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     *
+     * This method returns a user by its ID, including division, position, roles, and manager.
      */
     public function show($id)
     {
+        // Find user with related division, position, roles, and manager
         $user = User::with(['division', 'position', 'roles', 'manager'])
             ->find($id);
 
+        // Return error if user not found
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -137,6 +158,7 @@ class UserController extends Controller
             ], 404);
         }
 
+        // Return user data as JSON
         return response()->json([
             'success' => true,
             'data' => $user
@@ -149,11 +171,16 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     *
+     * This method validates and updates an existing user record, handles profile image upload and deletion,
+     * updates the password if provided, and syncs roles if provided.
      */
     public function update(Request $request, $id)
     {
+        // Find the user to update
         $user = User::find($id);
 
+        // Return error if user not found
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -161,6 +188,7 @@ class UserController extends Controller
             ], 404);
         }
 
+        // Validate the request data for updating a user
         $validator = Validator::make($request->all(), [
             'u_employee_id' => ['required', 'string', 'max:20', Rule::unique('login_users', 'u_employee_id')->ignore($id, 'u_id')],
             'u_name' => 'required|string|max:100',
@@ -180,6 +208,7 @@ class UserController extends Controller
             'roles.*' => 'exists:login_roles,role_id',
         ]);
 
+        // Return validation errors if any
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -193,7 +222,7 @@ class UserController extends Controller
         // Store old profile image path if exists
         $oldProfileImage = $user->u_profile_image;
         
-        // Handle profile image upload
+        // Handle profile image upload if provided
         if ($request->hasFile('u_profile_image')) {
             $file = $request->file('u_profile_image');
             $filename = $file->getClientOriginalName();
@@ -217,6 +246,7 @@ class UserController extends Controller
             unset($validated['u_password']);
         }
 
+        // Update the user
         $user->update($validated);
 
         // Sync roles if provided
@@ -224,6 +254,7 @@ class UserController extends Controller
             $user->roles()->sync($validated['roles']);
         }
 
+        // Return success response with updated user and relations
         return response()->json([
             'success' => true,
             'message' => 'User updated successfully',
@@ -236,11 +267,15 @@ class UserController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     *
+     * This method deletes a user and detaches all roles.
      */
     public function destroy($id)
     {
+        // Find the user to delete
         $user = User::find($id);
 
+        // Return error if user not found
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -248,12 +283,13 @@ class UserController extends Controller
             ], 404);
         }
 
-        // Detach all roles
+        // Detach all roles from the user
         $user->roles()->detach();
         
-        // Delete user
+        // Delete the user
         $user->delete();
 
+        // Return success response
         return response()->json([
             'success' => true,
             'message' => 'User deleted successfully'
